@@ -42,10 +42,11 @@ const Header = () => {
   const [userRole, setUserRole] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
+  const token = localStorage.getItem("token");
 
   // Hàm cập nhật thông tin user từ token trong localStorage
   const updateUserInfo = () => {
-    const token = localStorage.getItem("token");
+    
     if (token) {
       try {
         const decoded = jwt_decode(token);
@@ -56,6 +57,8 @@ const Header = () => {
         setUserName(decoded.sub);
         // Giả sử token chỉ chứa một role, nếu nhiều role thì bạn có thể xử lý thêm
         setUserRole(decoded.roles[0]);
+        console.log("User Role:", userRole);
+        console.log(decoded.roles[0]);
       } catch (error) {
         console.error("Lỗi khi giải mã token:", error);
         setUserId(null);
@@ -168,7 +171,7 @@ const Header = () => {
 
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {/* Chỉ hiển thị icon giỏ hàng nếu user không phải Seller */}
-          {userRole !== "ROLE_SELLER" && (
+          {jwt_decode(token).roles[0] !== "ROLE_Seller" && (
             <IconButton
               sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
               onClick={handleCartClick}
