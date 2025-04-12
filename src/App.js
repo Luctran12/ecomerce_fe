@@ -18,6 +18,9 @@ import SellerRegis from './screens/login/SellerRegis';
 import SellerDashboard from './screens/sellerScreen/SellerDashboard';
 import SellerLogin from './screens/sellerScreen/SellerLogin';
 import StoreNotification from './screens/sellerScreen/StoreNotification ';
+import ShopPage from './screens/ShopPage';
+import ShopDetail from './screens/ShopDetail';
+import OrderListPage from './screens/sellerScreen/OrderListPage';
 
 function App() {
   return (
@@ -38,6 +41,9 @@ function App() {
           <Route path='/seller' element={<SellerDashboard />} />
           <Route path='/seller-login' element={<SellerLogin />} />
           <Route path='/seller-noti' element={<StoreNotification />} />
+          <Route path="/store" element={<ShopPage />} />
+        <Route path="/shop/:id" element={<ShopDetail />} />
+        <Route path="/orderList" element={<OrderListPage />} />
         </Routes>
       </Container>
       <Footer />

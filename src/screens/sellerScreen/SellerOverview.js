@@ -37,6 +37,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import SockJS from "sockjs-client"
 import { Client } from "@stomp/stompjs"
 
+
 // Sample data
 const initialRecentOrders = [
   { id: 1, customer: "Nguyễn Văn A", product: "Áo thun nam", quantity: 2, date: "2023-07-15", status: "Đã giao hàng" },
@@ -112,6 +113,7 @@ export default function SellerOverview() {
   const [openDialog, setOpenDialog] = useState(false)
   const [notificationMessages, setNotificationMessages] = useState([])
   const stompClientRef = useRef(null)
+  
   const storeId = localStorage.getItem("storeId")
 
   // WebSocket setup
@@ -120,7 +122,10 @@ export default function SellerOverview() {
       console.warn("Không tìm thấy storeId, không thể đăng ký nhận thông báo!")
       return
     }
+    
+    console.log("storeId", storeId)
 
+    
     const socket = new SockJS("http://localhost:8389/ws")
     const client = new Client({
       webSocketFactory: () => socket,

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { jwtDecode as jwt_decode } from "jwt-decode";
 const SellerLogin = () => {
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +31,10 @@ const SellerLogin = () => {
 
       if (response?.data) {
         console.log(response.data)
-        
+        const storeId = jwt_decode(response?.data?.data?.token).userId;
         // Lưu userId vào localStorage
-        localStorage.setItem("storeId", response?.data?.data?.id);
+        localStorage.setItem("token", response?.data?.data?.token);
+        localStorage.setItem("storeId", storeId);
         console.log("====",localStorage.getItem("storeId"))
         // Chuyển hướng đến trang chủ
         navigate("/seller");

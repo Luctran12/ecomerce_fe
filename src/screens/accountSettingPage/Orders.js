@@ -12,10 +12,11 @@ import {
   Divider,
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -71,7 +72,7 @@ const Orders = () => {
               <Button variant="outlined" size="small" startIcon={<ChatIcon />} sx={{ mr: 1 }}>
                 Chat
               </Button>
-              <Button variant="outlined" size="small">Xem Shop</Button>
+              <Button onClick={() => navigate(`/shop/${order.items[0]?.product?.store?.id}`)} variant="outlined" size="small">Xem Shop</Button>
             </Box>
 
             {/* Hiển thị sản phẩm trong đơn hàng */}

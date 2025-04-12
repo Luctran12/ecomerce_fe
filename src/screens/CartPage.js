@@ -28,7 +28,8 @@ const CartPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!userId) navigate("/login");
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
   }, [userId, navigate]);
 
   useEffect(() => {

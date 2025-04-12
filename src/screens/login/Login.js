@@ -31,10 +31,10 @@ const Login = () => {
 
       if (response.data) {
         console.log(response.data)
-        console.log(response.data.data.id);
+        console.log(response.data.data.token);
         // Lưu userId vào localStorage
-        localStorage.setItem("userId", response.data.data.id);
-        console.log("====",localStorage.getItem("userId"))
+        localStorage.setItem("token", response.data.data.token);
+        
         window.dispatchEvent(new Event("storageChange"));
         // Chuyển hướng đến trang chủ
         navigate("/");
@@ -61,7 +61,7 @@ const Login = () => {
         )}
 
         <TextField
-          label="Email"
+          label="AccountName"
           variant="outlined"
           fullWidth
           margin="normal"
