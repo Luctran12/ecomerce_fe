@@ -36,6 +36,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import SockJS from "sockjs-client"
 import { Client } from "@stomp/stompjs"
+import { useNavigate } from "react-router-dom"
 
 
 // Sample data
@@ -113,7 +114,7 @@ export default function SellerOverview() {
   const [openDialog, setOpenDialog] = useState(false)
   const [notificationMessages, setNotificationMessages] = useState([])
   const stompClientRef = useRef(null)
-  
+  const navigate = useNavigate()
   const storeId = localStorage.getItem("storeId")
 
   // WebSocket setup
@@ -315,7 +316,7 @@ export default function SellerOverview() {
           <List>
             {notificationMessages.length > 0 ? (
               notificationMessages.map((notification) => (
-                <ListItem key={notification.id}>
+                <ListItem key={notification.id} onclick={() => navigate(`/orderlist`)}>
                   <ListItemText primary={notification.content} />
                 </ListItem>
               ))
@@ -386,7 +387,7 @@ export default function SellerOverview() {
             <List sx={{ width: "100%", bgcolor: "background.paper" }}>
               {recentOrders.map((order, index) => (
                 <Box key={order.id}>
-                  <ListItem alignItems="flex-start">
+                  <ListItem alignItems="flex-start" onClick={() => navigate(`/orderlist`)}>
                     <ListItemAvatar>
                       <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                         <ShoppingCartIcon />

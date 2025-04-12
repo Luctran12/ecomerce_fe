@@ -118,6 +118,8 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Xóa token khi logout
+    localStorage.removeItem("userId");
+    localStorage.removeItem("storeId");
     setUserId(null);
     setUserName("");
     setUserRole("");
