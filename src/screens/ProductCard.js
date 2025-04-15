@@ -12,7 +12,7 @@ function ProductCard({ product }) {
 
   return (
     <Card
-      onClick={() => navigate("/detail/" + product.id)}
+     
       variant="outlined"
       sx={{
         cursor: 'pointer',
@@ -100,8 +100,8 @@ function ProductCard({ product }) {
               {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
             </Typography>
             {/* Optional: Add to Cart Button */}
-            <Typography variant='h8'>
-              đã bán
+            <Typography variant='h9'>
+              đã bán {product.sold}
             </Typography>
           </Stack>
         </Stack>

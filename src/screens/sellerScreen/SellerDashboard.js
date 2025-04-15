@@ -1,26 +1,23 @@
-import React, { useState } from "react";
 import { Container, Paper } from "@mui/material";
+import React, { useState } from "react";
 
-import Profile from "../accountSettingPage/Profile";
-import Notifications from "../accountSettingPage/Notification";
 import Addresses from "../accountSettingPage/Addresses";
+import Profile from "../accountSettingPage/Profile";
 import Vouchers from "../accountSettingPage/Vouchers";
-import Orders from "../accountSettingPage/Orders";
-import Sidebar from "../accountSettingPage/Sidebar";
 import AddProductForm from "./AddProductForm";
-import SellerSidebar from "./SellerSidebar";
+import ProductByStore from "./ProductByStore";
 import SellerOverview from "./SellerOverview";
-
+import SellerSidebar from "./SellerSidebar";
+import ShopProfileForm from "./ShopProfileForm ";
 
 const SellerDashboard = () => {
   const [selectedMenu, setSelectedMenu] = useState("overview"); // Mặc định hiển thị Profile
-  
 
   // Chọn nội dung hiển thị
   const renderContent = () => {
     switch (selectedMenu) {
       case "profile":
-        return <Profile />;
+        return <ShopProfileForm />;
       case "addProduct":
         return <AddProductForm />;
       case "addresses":
@@ -29,6 +26,8 @@ const SellerDashboard = () => {
         return <Vouchers />;
       case "overview":
         return <SellerOverview />;
+      case "updateProduct":
+        return <ProductByStore />;
       default:
         return <Profile />;
     }
@@ -37,10 +36,16 @@ const SellerDashboard = () => {
   return (
     <Container maxWidth="lg">
       {/* Sidebar */}
-      <SellerSidebar selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
+      <SellerSidebar
+        selectedMenu={selectedMenu}
+        setSelectedMenu={setSelectedMenu}
+      />
 
       {/* Nội dung chính */}
-      <Paper elevation={1} style={{ marginLeft: "100px", padding: "5px", width:'100%' }}>
+      <Paper
+        elevation={1}
+        style={{ marginLeft: "100px", padding: "5px", width: "100%" }}
+      >
         {renderContent()}
       </Paper>
     </Container>

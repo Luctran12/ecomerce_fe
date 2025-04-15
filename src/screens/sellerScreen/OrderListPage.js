@@ -21,6 +21,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import axios from 'axios';
+import dayjs from "dayjs";
 import { useNavigate } from 'react-router-dom';
 
 const OrderListPage = () => {
@@ -118,6 +119,8 @@ const OrderListPage = () => {
               <TableCell>Giá</TableCell>
               <TableCell>Số lượng</TableCell>
               <TableCell>Trạng thái</TableCell>
+              <TableCell>Giao đến</TableCell>
+              <TableCell>Ngày đặt</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -141,6 +144,7 @@ const OrderListPage = () => {
                     value={order.status || 'Pending'}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
                     size="small"
+                    disabled={order.status === 'Delivered'}
                   >
                     {statusOptions
                       .filter(status => status !== 'Tất cả')
@@ -151,6 +155,8 @@ const OrderListPage = () => {
                       ))}
                   </Select>
                 </TableCell>
+                <TableCell>{order.address}</TableCell>
+                <TableCell>{dayjs(order.date).format("YYYY-MM-DD HH:mm")}</TableCell>
               </TableRow>
             ))}
             {filteredOrders.length === 0 && (

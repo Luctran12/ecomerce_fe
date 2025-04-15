@@ -137,7 +137,7 @@ const OrderPage = () => {
         price: item.product.price,
       })),
       address: userInfo.address,
-      totalPrice: orderItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) + (shippingFee || 0),
+      totalPrice: orderItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) + (30000 || 0),
     };
 
     try {
@@ -201,22 +201,19 @@ const OrderPage = () => {
         </Table>
       </TableContainer>
 
-      {shippingFee !== null && (
+     
         <Typography variant="h6" sx={{ mt: 2 }}>
-          Phí vận chuyển: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(shippingFee)}
+          Phí vận chuyển: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(30000)}
         </Typography>
-      )}
+      
       
       <Typography variant="h6" sx={{ mt: 2 }}>
-        Tổng tiền: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) + shippingFee)}
+        Tổng tiền: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) + 30000)}
       </Typography>
 
       
-      {!shippingFee && (
-  <Typography variant="h6" color="error" sx={{ mt: 2 }}>
-    ⚠️ {shippingError}
-  </Typography>
-)}
+      
+
 
 
       <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleConfirmOrder}>Xác nhận đặt hàng</Button>

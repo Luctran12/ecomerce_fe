@@ -238,9 +238,11 @@ export default function SellerOverview() {
               flexDirection: "column",
               borderRadius: 2,
               height: 140,
+              cursor: "pointer"
             }}
+            onclick={() => navigate("/orderlist")}
           >
-            <Box display="flex" justifyContent="space-between">
+            <Box  display="flex" justifyContent="space-between" >
               <Typography component="h2" variant="h6" color="primary" gutterBottom>
                 Đơn hàng
               </Typography>
@@ -313,10 +315,10 @@ export default function SellerOverview() {
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Thông báo mới</DialogTitle>
         <DialogContent>
-          <List>
+          <List sx={{cursor: "pointer"}}>
             {notificationMessages.length > 0 ? (
               notificationMessages.map((notification) => (
-                <ListItem key={notification.id} onclick={() => navigate(`/orderlist`)}>
+                <ListItem  key={notification.id} onclick={() => navigate(`/orderlist`)}>
                   <ListItemText primary={notification.content} />
                 </ListItem>
               ))
@@ -384,7 +386,7 @@ export default function SellerOverview() {
             <Typography component="h2" variant="h6" color="primary" gutterBottom display="flex" alignItems="center">
               <NotificationsIcon sx={{ mr: 1 }} /> Thông báo đơn hàng mới
             </Typography>
-            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            <List  sx={{ width: "100%", bgcolor: "background.paper", cursor: "pointer" }}>
               {recentOrders.map((order, index) => (
                 <Box key={order.id}>
                   <ListItem alignItems="flex-start" onClick={() => navigate(`/orderlist`)}>

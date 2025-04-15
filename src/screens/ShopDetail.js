@@ -53,7 +53,7 @@ const ShopDetail = () => {
         <CardMedia
           component="img"
           height="180"
-          image={shop.bannerUrl || 'https://via.placeholder.com/800x200?text=Shop+Banner'}
+          image={shop.backgroundUrl || 'https://via.placeholder.com/800x200?text=Shop+Banner'}
         />
         <Avatar
           src={shop.avatarUrl || 'https://via.placeholder.com/80'}
@@ -117,7 +117,7 @@ const ShopDetail = () => {
                 alt={product.name}
                 sx={{
                   width: '100%',
-                  height: 130,
+                  height: 230,
                   objectFit: 'cover'
                 }}
               />

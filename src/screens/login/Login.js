@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { jwtDecode as jwt_decode } from "jwt-decode";
 const Login = () => {
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +34,7 @@ const Login = () => {
         console.log(response.data.data.token);
         // Lưu userId vào localStorage
         localStorage.setItem("token", response.data.data.token);
-        
+        localStorage.setItem("userId", jwt_decode(response.data.data.token).userId);
         window.dispatchEvent(new Event("storageChange"));
         // Chuyển hướng đến trang chủ
         navigate("/");
@@ -42,6 +42,7 @@ const Login = () => {
         setError("Đăng nhập thất bại! Vui lòng kiểm tra lại email hoặc mật khẩu.");
       }
     } catch (err) {
+      console.log(err)
       setError("Lỗi máy chủ! Vui lòng thử lại sau.");
     }
   };

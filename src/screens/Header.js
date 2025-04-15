@@ -1,8 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import {
+  Dashboard,
+  KeyboardArrowDown,
+  Login,
+  Logout,
+  Person,
+  PersonAdd,
+  Settings,
+} from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {
+  Avatar,
+  Box,
+  Divider,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -10,8 +24,9 @@ import InputBase from "@mui/material/InputBase";
 import { alpha, styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Box, Menu, MenuItem, CssBaseline, Container, Paper, Link, Alert } from "@mui/material";
-import { jwtDecode as jwt_decode } from "jwt-decode"; // sử dụng named export
+import { jwtDecode as jwt_decode } from "jwt-decode"; // using named export
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../image/logo_shop.png";
 
 const Search = styled("div")(({ theme }) => ({
@@ -42,50 +57,70 @@ const Header = () => {
   const [userRole, setUserRole] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token") || "";
 
-  // Hàm cập nhật thông tin user từ token trong localStorage
-  const updateUserInfo = () => {
-    
-    if (token) {
+  // Function to update user information from token in localStorage
+  const updateUserInfo = React.useCallback(() => {
+    const currentToken = localStorage.getItem("token");
+
+    if (currentToken) {
       try {
-        const decoded = jwt_decode(token);
-        const id = decoded.userId;
-        console.log("Decoded token:", decoded);
+        const decoded = jwt_decode(currentToken);
+        const id = decoded.userId || "";
+        const image = decoded.image || "";
+
+        // Update state with user information from token
         setUserId(id);
-        console.log("User ID:", userId);
         setUserName(decoded.sub);
-        // Giả sử token chỉ chứa một role, nếu nhiều role thì bạn có thể xử lý thêm
-        setUserRole(decoded.roles[0]);
-        console.log("User Role:", userRole);
-        console.log(decoded.roles[0]);
+
+        // Assuming token contains only one role. For multiple roles, additional processing would be needed
+        if (decoded.roles && decoded.roles.length > 0) {
+          setUserRole(decoded.roles[0]);
+        }
+
+        // Development-only logging
+        if (process.env.NODE_ENV === "development") {
+          console.log("User authenticated:", {
+            id: id,
+            name: decoded.sub,
+            role: decoded.roles?.[0],
+            image: image,
+          });
+        }
       } catch (error) {
-        console.error("Lỗi khi giải mã token:", error);
-        setUserId(null);
-        setUserName("");
-        setUserRole("");
+        console.error("Error decoding token:", error.message);
+        // Clear user state on error
+        clearUserState();
       }
     } else {
-      setUserId(null);
-      setUserName("");
-      setUserRole("");
+      // Clear user state when no token exists
+      clearUserState();
     }
+  }, []);
+
+  // Helper function to clear user state
+  const clearUserState = () => {
+    setUserId(null);
+    setUserName("");
+    setUserRole("");
   };
 
   useEffect(() => {
+    // Initialize user info when component mounts
     updateUserInfo();
 
-    // Lắng nghe sự kiện storage (cho các tab khác)
+    // Listen for storage events (for other tabs)
     window.addEventListener("storage", updateUserInfo);
 
-    // Lắng nghe custom event storageChange (trong cùng tab)
+    // Listen for custom storageChange event (within the same tab)
     window.addEventListener("storageChange", updateUserInfo);
 
     return () => {
+      // Clean up event listeners when component unmounts
       window.removeEventListener("storage", updateUserInfo);
       window.removeEventListener("storageChange", updateUserInfo);
     };
-  }, []);
+  }, [updateUserInfo]);
 
   const handleCartClick = () => {
     const token = localStorage.getItem("token");
@@ -105,7 +140,8 @@ const Header = () => {
     navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
   };
 
-  const handleKeyPress = (event) => {
+  // Handle Enter key press for search
+  const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       fetchSearchResults();
     }
@@ -119,14 +155,30 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  function isValidToken(token) {
+    try {
+      const decoded = jwt_decode(token);
+      return decoded && decoded.roles && decoded.roles.length > 0;
+    } catch (err) {
+      console.error("Invalid token:", err.message);
+      return false;
+    }
+  }
+  
+
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Xóa token khi logout
+    // Remove all user-related data from localStorage
+    localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("storeId");
-    setUserId(null);
-    setUserName("");
-    setUserRole("");
-    window.dispatchEvent(new Event("storageChange")); // Trigger event để cập nhật lại thông tin user
+
+    // Clear user state using our helper function
+    clearUserState();
+
+    // Trigger event to update user info across the app
+    window.dispatchEvent(new Event("storageChange"));
+
+    // Redirect to login page
     navigate("/login");
   };
 
@@ -142,27 +194,38 @@ const Header = () => {
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between", px: 5 }}>
-        <div onClick={() => navigate("/")} style={{ marginLeft: 10, cursor: "pointer" }}>
-          <img src={logo} alt="logo" width={80} height={80} style={{ borderRadius: 8 }} />
+        <div
+          onClick={() => navigate("/")}
+          style={{ marginLeft: 10, cursor: "pointer" }}
+        >
+          <img
+            src={logo}
+            alt="logo"
+            width={80}
+            height={80}
+            style={{ borderRadius: 8 }}
+          />
           <Typography variant="h5" component="div" sx={{ fontWeight: "bold" }}>
             L-SHOP
           </Typography>
         </div>
+        {!isValidToken(token) &&  (
+  <Button
+    onClick={() => navigate("/seller-login")}
+    sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
+  >
+    Kênh người bán
+  </Button>
+)}
 
-        <Button
-          onClick={() => navigate("/seller-login")}
-          sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
-        >
-          Kênh người bán
-        </Button>
 
         <Search>
           <StyledInputBase
-            placeholder="Tìm kiếm sản phẩm..."
+            placeholder="Search products..."
             inputProps={{ "aria-label": "search" }}
             value={searchQuery}
             onChange={handleSearchChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
           />
           <IconButton sx={{ color: "white" }} onClick={fetchSearchResults}>
             <SearchIcon />
@@ -170,8 +233,8 @@ const Header = () => {
         </Search>
 
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* Chỉ hiển thị icon giỏ hàng nếu user không phải Seller */}
-          {jwt_decode(token).roles[0] !== "ROLE_Seller" && (
+          {/* Only show shopping cart icon if user is not a Seller */}
+          {token && isValidToken(token) && jwt_decode(token).roles[0] !== "ROLE_Seller" && (
             <IconButton
               sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
               onClick={handleCartClick}
@@ -184,13 +247,49 @@ const Header = () => {
             <>
               <Button
                 onClick={() => navigate("/register")}
-                sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
+                startIcon={<PersonAdd sx={{ fontSize: 18 }} />}
+                sx={{
+                  color: "white",
+                  mx: 1,
+                  fontWeight: 500,
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 0.8,
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
               >
                 Sign Up
               </Button>
               <Button
                 onClick={() => navigate("/login")}
-                sx={{ color: "white", mx: 1, "&:hover": { color: "#bbbbbb" } }}
+                variant="contained"
+                startIcon={<Login sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "primary.main",
+                  color: "white",
+                  mx: 1,
+                  fontWeight: 500,
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  px: 2.5,
+                  py: 0.8,
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    backgroundColor: "primary.dark",
+                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
+                    transform: "translateY(-2px)",
+                  },
+                  "&:active": {
+                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.15)",
+                    transform: "translateY(0)",
+                  },
+                }}
               >
                 Login
               </Button>
@@ -199,23 +298,174 @@ const Header = () => {
             <Box
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              sx={{ display: "flex", alignItems: "center" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                borderRadius: 2,
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                },
+                padding: "4px 8px",
+              }}
             >
-              <IconButton sx={{ color: "white", mx: 1 }}>
-                <AccountCircle />
-              </IconButton>
-              {/* Hiển thị tên user bên cạnh avatar */}
-              <Typography variant="body1" sx={{ mr: 2 }}>
-                {userName}
-              </Typography>
+              <Avatar
+              src={jwt_decode(token).image || undefined}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: "primary.main",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+              >
+                {!jwt_decode(token).image && userName.charAt(0)}
+              </Avatar>
+
+              <Box sx={{ ml: 1, display: "flex", alignItems: "center" }}>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: 500,
+                    color: "white",
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  {userName}
+                </Typography>
+                <KeyboardArrowDown
+                  sx={{
+                    color: "white",
+                    fontSize: 20,
+                    ml: 0.5,
+                    transition: "transform 0.2s ease",
+                    transform: Boolean(anchorEl)
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                  }}
+                />
+              </Box>
+
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMouseLeave}
-                MenuListProps={{ onMouseLeave: handleMouseLeave }}
+                MenuListProps={{
+                  onMouseLeave: handleMouseLeave,
+                  sx: { py: 0.5 },
+                }}
+                PaperProps={{
+                  elevation: 3,
+                  sx: {
+                    mt: 1.5,
+                    minWidth: 200,
+                    borderRadius: 2,
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.15))",
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={() => navigate("/settings")}>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <Box sx={{ px: 2, py: 1.5 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    {userName}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: "0.8rem" }}
+                  >
+                    {userRole === "ROLE_Seller"
+                      ? "Seller Account"
+                      : "Customer Account"}
+                  </Typography>
+                </Box>
+
+                <Divider />
+
+                {userRole === "ROLE_Seller" ? (
+                  <MenuItem
+                    onClick={() => navigate("/seller")}
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.04)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Dashboard fontSize="small" color="primary" />
+                    </ListItemIcon>
+                    <Typography variant="body2">Seller Dashboard</Typography>
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    onClick={() => navigate("/settings")}
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.04)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Person fontSize="small" color="primary" />
+                    </ListItemIcon>
+                    <Typography variant="body2">My Profile</Typography>
+                  </MenuItem>
+                )}
+
+                <MenuItem
+                  onClick={() => navigate("/settings")}
+                  sx={{
+                    py: 1.5,
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <Settings fontSize="small" color="primary" />
+                  </ListItemIcon>
+                  <Typography variant="body2">Account Settings</Typography>
+                </MenuItem>
+
+                <Divider />
+
+                <MenuItem
+                  onClick={handleLogout}
+                  sx={{
+                    py: 1.5,
+                    px: 2,
+                    color: "error.main",
+                    "&:hover": {
+                      backgroundColor: "rgba(211, 47, 47, 0.04)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <Logout fontSize="small" color="error" />
+                  </ListItemIcon>
+                  <Typography variant="body2" color="error.main">
+                    Logout
+                  </Typography>
+                </MenuItem>
               </Menu>
             </Box>
           )}

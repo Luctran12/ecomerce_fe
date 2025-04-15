@@ -7,15 +7,17 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SellerOverview from "./SellerOverview";
+import { LayoutDashboard, ShoppingBag, Settings } from 'lucide-react';
+import { Inventory } from "@mui/icons-material";
+
 
 const SellerSidebar = ({ selectedMenu, setSelectedMenu }) => {
   const menuItems = [
     { key: "profile", label: "Hồ Sơ", icon: <AccountCircleIcon color="primary" /> },
-    { key: "notifications", label: "Thông Báo", icon: <NotificationsIcon color="primary" /> },
-    { key: "addresses", label: "Địa Chỉ", icon: <LocationOnIcon color="error" /> },
     { key: "vouchers", label: "Kho Voucher", icon: <CardGiftcardIcon /> },
-    { key: "overview", label: "Tổng quan", icon: <ShoppingCartIcon /> },
-    {key: "addProduct", label: "Thêm sản phẩm", icon: <LibraryAddIcon/>}
+    { key: "overview", label: "Tổng quan", icon: <LayoutDashboard /> },
+    {key: "addProduct", label: "Thêm sản phẩm", icon: <LibraryAddIcon/>},
+    {key: "updateProduct", label: "Chỉnh sửa sản phẩm", icon: <Inventory/>}
   ];
 
   return (
